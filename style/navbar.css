@@ -1,0 +1,145 @@
+/* Logo */
+img {
+    width: 60px;
+    background-size: contain;
+  }
+  
+  /* Header */
+  header {
+    width: 100%;
+    height: 80px;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 100px;
+    position: relative;
+    z-index: 2;
+  }
+  
+  .fixed-header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+  }
+  
+  /* Logo container */
+  .logo {
+    font-size: 28px;
+    font-weight: bold;
+    color: #00308F;
+    filter: brightness(1.5) contrast(1.0);
+  }
+  
+  /* Hamburger menu */
+  .hamburger {
+    display: none;
+    cursor: pointer;
+  }
+  
+  .hamburger .line {
+    width: 30px;
+    height: 3px;
+    background: #00308F;
+    margin: 6px 0;
+  }
+  
+  /* Navbar */
+  .nav-bar ul {
+    display: flex;
+    list-style: none;
+  }
+  
+  .nav-bar ul li {
+    margin: 0 10px;
+  }
+  
+  .nav-bar ul li a {
+    display: block;
+    color: #00308F;
+    font-size: 18px;
+    padding: 12px 20px;
+    border-radius: 25px;
+    transition: 0.3s;
+    text-decoration: none;
+    position: relative;
+  }
+  
+  /* Hover underline */
+  .nav-bar ul li a::after {
+    content: "";
+    position: absolute;
+    bottom: 6px;
+    left: 20px;
+    width: 0%;
+    height: 2px;
+    background-color: #00308F;
+    transition: width 0.3s ease;
+  }
+  
+  .nav-bar ul li a:hover::after {
+    width: 60%;
+  }
+  
+  .nav-bar ul li a.active {
+    font-weight: bold;
+  }
+  
+  /* Responsive breakpoints */
+  @media only screen and (max-width: 1320px) {
+    header {
+      padding: 0 50px;
+    }
+  }
+  
+  @media only screen and (max-width: 1100px) {
+    header {
+      padding: 0 30px;
+    }
+  }
+  
+  @media only screen and (max-width: 900px) {
+    .hamburger {
+      display: block;
+    }
+  
+    .nav-bar {
+      height: 0;
+      position: absolute;
+      top: 80px;
+      left: 0;
+      right: 0;
+      width: 100vw;
+      background: #00308F;
+      transition: 0.2s;
+      overflow: hidden;
+    }
+  
+    .nav-bar.active {
+      height: 450px;
+    }
+  
+    .nav-bar ul {
+      display: block;
+      width: fit-content;
+      margin: 80px auto 0 auto;
+      text-align: center;
+      transition: 0.5s;
+      opacity: 0;
+    }
+  
+    .nav-bar.active ul {
+      opacity: 1;
+    }
+  
+    .nav-bar ul li a {
+      margin-bottom: 12px;
+      color: #f0f1f8;
+    }
+  
+    .nav-bar ul li a::after {
+      background-color: #f0f1f8;
+    }
+  }
+  
