@@ -19,6 +19,7 @@
      <link rel="stylesheet" href="style/testimonial.css">
      <link rel="stylesheet" href="style/appointment.css">
      <link rel="stylesheet" href="style/footer.css">
+     <link rel="stylesheet" href="style/aiagent.css">
 </head>
 <body>
 
@@ -51,7 +52,7 @@
                 <h1 id="DJE">DJE</h1>
                 <h1>SOT interveno, për të ardhmen e fëmijës tënd!</h1>
                 <h1 id="NESËR">NESËR</h1>
-                <button>Cakto Termin</button>
+                <a href="#kontakti"><button>Cakto Termin</button></a>
             </div>
         </div>
     </section>
@@ -156,22 +157,8 @@
               <p>Ekspert në menaxhim dhe udhëheqje të qendrës.</p>
               <div class="social-icons">
                 <a href="#"><i class="fab fa-facebook-f"></i></a>
-                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                <a href="https://www.linkedin.com/in/fidan-nuhiu-337421199/"><i class="fab fa-linkedin-in"></i></a>
                 <a href="mailto:fidani@example.com"><i class="fas fa-envelope"></i></a>
-              </div>
-            </div>
-          </div>
-      
-          <div class="team-member reveal">
-            <img src="img/fatlinda.jpg" alt="Fatlinda">
-            <h3>Fatlinda</h3>
-            <p class="role">SLP</p>
-            <div class="hover-info">
-              <p>Mbështetje emocionale dhe zhvillim personal për fëmijët.</p>
-              <div class="social-icons">
-                <a href="#"><i class="fab fa-facebook-f"></i></a>
-                <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                <a href="mailto:fatlinda@example.com"><i class="fas fa-envelope"></i></a>
               </div>
             </div>
           </div>
@@ -225,31 +212,30 @@
       
 
       <section class="testimonial-section reveal" id="mendimet">
-        <h2>What Our Clients Say</h2>
+        <h2>Disa Mendime Rreth Nesh</h2>
     
         <div class="slider-wrapper">
           <div class="testimonial-slider" id="testimonial-slider">
             <div class="testimonial-card">
               <p>Dua të shpreh mirënjohjen dhe admirimin tim të përzemërt për punën e shkëlqyer që po bën qendra për edukim, rehabilitim dhe avancim në ofrimin e terapisë për fëmijën tim autik. Angazhimi juaj për të ofruar kujdesin më të mirë të mundshëm për fëmijën tim është vërtet i lavdërueshëm dhe unë jam e frymëzuar nga përkushtimi dhe dhembshuria e profesionistëve në qendër.</p>
-              <div class="name">– Arbër Hoxha</div>
             </div>
             <div class="testimonial-card">
               <p>Ju falënderoj qendrën për përkushtimin dhe angazhimin e palodhshëm për t’i ndihmuar fëmijët me autizëm të lulëzojnë dhe u uroj atyre suksese të vazhdueshme në punën e tyre të rëndësishme. Unë si nënë jam mirënjohëse për angazhimin tuaj për fëmijën tim! Kam qenë e kënaqur gjatë gjithë kohës që kemi bashkëpunuar. Terapistët tuaj kanë qenë më shumë se terapistë me fëmijën tim. Kanë qenë familje.</p>
-              <div class="name">– Blerta Krasniqi</div>
+              
             </div>
             <div class="testimonial-card">
               <p>Gjatë gjithë seancave tona, ke treguar ekspertizë, durim dhe dhembshuri të jashtëzakonshme. Vështrimet tua dhe strategjitë praktike më kanë ndihmuar ta identifikoj dhe t’i menaxhoj burimet e ankthit tim dhe më kanë dhënë mjetet që më nevojiten për tu orientuar në situata të vështira me lehtësi më të madhe.</p>
-              <div class="name">– Erion Dervishi</div>
+              
             </div>
             <div class="testimonial-card">
               <p>Gjithashtu dua të shpreh mirënjohjen time për angazhimin tuaj të palëkundur për mirëqenien time. Mbështetja dhe inkurajimi yt kanë qenë të paçmueshme për mua dhe ndihem e sigurt se do të vazhdoj të bëj përparim në menaxhimin e ankthit tim me udhëzimet tua.</p>
-              <div class="name">– Valbona Berisha</div>
+              
             </div>
             <div class="testimonial-card">
               <p>Unë jam vërtet mirënjohëse për punën që ke bërë dhe për ndikimin pozitiv që ke pasur në jetën time.
                 Përkushtimi juaj për t’i ndihmuar të tjerët
                 është një frymëzim dhe ndihem me fat që pata mundësinë të punoj me ju.</p>
-              <div class="name">– Besnik Shala</div>
+             
             </div>
           </div>
         </div>
@@ -264,8 +250,8 @@
       <section class="appointment-section reveal" id="kontakti">
         <div class="appointment-container">
           <div class="left-side">
-            <h1>Book Your Appointment</h1>
-            <p>Fill out the form to schedule a meeting with one of our coordinators. We will get back to you as soon as possible.</p>
+            <h1>Rezervoni Takimin Tuaj</h1>
+            <p>Plotësoni formularin për të caktuar një takim me një nga koordinatorët tanë. Do t'ju kontaktojmë sa më shpejt të jetë e mundur.</p>
           </div>
       
           <div class="divider"></div>
@@ -273,12 +259,12 @@
           <div class="right-side">
             <form id="appointment-form">
               <div class="form-group">
-                <label for="name">First Name</label>
+                <label for="name">Emri</label>
                 <input type="text" id="name" required />
               </div>
       
               <div class="form-group">
-                <label for="surname">Last Name</label>
+                <label for="surname">Mbiemri</label>
                 <input type="text" id="surname" required />
               </div>
       
@@ -288,25 +274,24 @@
               </div>
       
               <div class="form-group">
-                <label for="phone">Phone Number</label>
+                <label for="phone">Numri i telefonit</label>
                 <input type="tel" id="phone" required />
               </div>
       
               <div class="form-group">
-                <label for="reason">Reason for Appointment</label>
+                <label for="reason">Arsyeja e Takimit</label>
                 <textarea id="reason" required></textarea>
               </div>
       
-              <button type="submit" class="btn">Book Appointment</button>
+              <button type="submit" class="btn">Cakto Takim</button>
       
               <div class="thank-you" id="thank-you-msg" style="display: none;">
-                Thank you for making an appointment. Wait for the coordinator to contact you.
+                Faleminderit që caktuat një takim. Prisni që koordinatori t'ju kontaktojë.
               </div>
             </form>
           </div>
         </div>
       </section>
-
 
       <footer class="footer">
         <div class="footer-container">
@@ -317,13 +302,13 @@
       
           <!-- Middle (Social Icons) -->
           <div class="footer-middle">
-            <a href="https://www.facebook.com" target="_blank" class="social-icon">
+            <a href="https://www.facebook.com/qendraERA" target="_blank" class="social-icon">
               <i class="fab fa-facebook-f"></i>
             </a>
-            <a href="https://www.instagram.com" target="_blank" class="social-icon">
+            <a href="https://www.instagram.com/qendraera/" target="_blank" class="social-icon">
               <i class="fab fa-instagram"></i>
             </a>
-            <a href="mailto:your-email@gmail.com" class="social-icon">
+            <a href="mailto:info@qendraera.com" class="social-icon">
               <i class="fas fa-envelope"></i>
             </a>
           </div>
