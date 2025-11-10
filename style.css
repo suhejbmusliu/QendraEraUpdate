@@ -1,48 +1,83 @@
 @import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: "Raleway", sans-serif;
-    font-optical-sizing: auto;
-    font-weight: 400;
-    font-style: normal;
-  }
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:"Raleway",sans-serif;
+  font-optical-sizing:auto;
+  font-weight:400;
+  font-style:normal;
+}
 
-  body {
-    transition: background 0.3s, color 0.3s;
-  }
+html{
+  /* smoother anchor jumps */
+  scroll-behavior:smooth;
+  /* iOS bouncing fix when chat is open */
+  overscroll-behavior-y:none;
+}
 
-  html {
-    scroll-behavior: smooth;
-  }
+body{
+  transition:background .3s,color .3s;
+  min-height:100%;
+}
 
-  .section {
-    scroll-margin-top: 4rem;
-  }
+/* ===== Scroll offset for anchor sections under sticky header ===== */
+.section{ scroll-margin-top: 4rem; }
+@media (min-width:600px){
+  .section{ scroll-margin-top: 4rem; }
+}
+/* Large screens */
+@media (min-width:992px){
+  .section{ scroll-margin-top: 4rem; }
+}
 
-    @media (min-width: 600px) {
-     .section {
-    scroll-margin-top: 4rem;
-  }
-    }
-  }
+/* ===== Reveal animation ===== */
+.reveal{
+  position:relative;
+  transform:translateY(150px);
+  opacity:0;
+  transition:1s all ease;
+}
+.reveal.active{
+  transform:translateY(0);
+  opacity:1;
+}
 
-  /* Large screens */
-  @media (min-width: 992px) {
- .section {
-    scroll-margin-top: 4rem;
-  }
-  }
-  .reveal{
-    position: relative;
-    transform: translateY(150px);
-    opacity: 0;
-    transition: 1s all ease;
-  }
-  
-  .reveal.active{
-    transform: translateY(0);
-    opacity: 1;
-  }
+/* ====== Mobile chat + background scroll lock ====== */
+body.no-scroll{
+  position:fixed;
+  overflow:hidden;
+  inset:0;           /* lock the viewport */
+  width:100%;
+}
+body.chat-open{
+  overscroll-behavior:contain;
+}
+
+/* Botpress container safe height on mobile */
+#bp-web-widget-container,
+#bp-web-widget,
+.bpw-layout,
+.bpw-layout > div{
+  max-height:100dvh; /* better than 100vh on iOS/Android */
+}
+
+/* Keep chat above sticky headers/footers */
+#bp-web-widget-container{ z-index:99999 !important; }
+
+/* ===== Sticky header helper class (you already toggle this in JS) ===== */
+header.fixed-header{
+  position:sticky;
+  top:0;
+  left:0;
+  right:0;
+  z-index:1000;
+  backdrop-filter:saturate(120%) blur(6px);
+}
+
+/* ===== Mobile nav open state (optional helpers) ===== */
+.nav-bar.active{
+  display:block;
+}
+.hamburger{ cursor:pointer; }

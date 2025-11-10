@@ -1,67 +1,70 @@
-// Select elements
-let navBar = document.querySelector(".nav-bar");
-let hamburger = document.querySelector(".hamburger");
-let navLinks = document.querySelectorAll("header nav a");
-let sections = document.querySelectorAll("section");
-let header = document.querySelector("header");
+// ===== Select elements =====
+const navBar     = document.querySelector(".nav-bar");
+const hamburger  = document.querySelector(".hamburger");
+const navLinks   = document.querySelectorAll("header nav a");
+const sections   = document.querySelectorAll("section");
+const header     = document.querySelector("header");
 
-// Toggle mobile menu
-hamburger.onclick = function () {
-  navBar.classList.toggle("active");
-};
+// ===== Helpers =====
+const getHeaderHeight = () => (header ? header.offsetHeight : 0);
 
-// Scroll spy and sticky header
-window.onscroll = () => {
-  let scrollY = window.scrollY;
-
-  // Sticky header effect
-  if (scrollY > 80) {
-    header.classList.add("fixed-header");
-  } else {
-    header.classList.remove("fixed-header");
-  }
-
-  // Scroll spy: highlight active nav link
-  sections.forEach(sec => {
-    let top = scrollY;
-    let offset = sec.offsetTop - 150;
-    let height = sec.offsetHeight;
-    let id = sec.getAttribute("id");
-
-    if (top >= offset && top < offset + height) {
-      navLinks.forEach(link => {
-        link.classList.remove("active");
-        if (link.getAttribute("href") === `#${id}`) {
-          link.classList.add("active");
-        }
-      });
-    }
+// ===== Mobile menu toggle + background lock =====
+if (hamburger) {
+  hamburger.addEventListener("click", () => {
+    const isActive = navBar?.classList.toggle("active");
+    hamburger.setAttribute("aria-expanded", isActive ? "true" : "false");
+    // lock page scroll when menu is open
+    document.body.classList.toggle("no-scroll", !!isActive);
   });
-};
+}
 
-// Smooth scroll with offset and close mobile menu on link click
+// Close mobile nav when a link is clicked (and smooth scroll with offset)
 navLinks.forEach(link => {
   link.addEventListener("click", (e) => {
+    const href = link.getAttribute("href") || "";
+    if (!href.startsWith("#")) return; // external link—let it go
+
     e.preventDefault();
-    let targetId = link.getAttribute("href").substring(1);
-    let targetElement = document.getElementById(targetId);
+    const targetId = href.slice(1);
+    const targetEl = document.getElementById(targetId);
+    if (!targetEl) return;
 
-    window.scrollTo({
-      top: targetElement.offsetTop - 150,
-      behavior: "smooth"
-    });
+    // compute offset with live header height (sticky)
+    const top = targetEl.getBoundingClientRect().top + window.scrollY - (getHeaderHeight() + 10);
 
-    // Close mobile nav menu
-    navBar.classList.remove("active");
+    window.scrollTo({ top, behavior: "smooth" });
+
+    // Close mobile nav
+    navBar?.classList.remove("active");
+    document.body.classList.remove("no-scroll");
   });
 });
 
+// ===== Scroll spy + sticky header toggle =====
+window.addEventListener("scroll", () => {
+  const scrollY = window.scrollY;
 
+  // Sticky header effect
+  if (scrollY > 80) header?.classList.add("fixed-header");
+  else header?.classList.remove("fixed-header");
 
+  // Scroll spy (active link)
+  sections.forEach(sec => {
+    const rectTop  = sec.getBoundingClientRect().top + window.scrollY;
+    const offset   = rectTop - (getHeaderHeight() + 70);
+    const height   = sec.offsetHeight;
+    const id       = sec.getAttribute("id");
 
-//testimonials slider
+    if (scrollY >= offset && scrollY < offset + height) {
+      navLinks.forEach(a => a.classList.remove("active"));
+      const active = document.querySelector(`header nav a[href="#${id}"]`);
+      active?.classList.add("active");
+    }
+  });
+}, { passive:true });
 
-const slider = document.getElementById('testimonial-slider');
+// ===== Testimonials slider =====
+const slider = document.getElementById("testimonial-slider");
 let position = 0;
 
 function getVisibleCount() {
@@ -71,108 +74,141 @@ function getVisibleCount() {
 }
 
 function slide(direction) {
-  const card = slider.querySelector('.testimonial-card');
-  const cardWidth = card.offsetWidth + 20; // width + margin
-  const visibleCount = getVisibleCount();
+  if (!slider) return;
+  const card = slider.querySelector(".testimonial-card");
+  if (!card) return;
+
+  // Use bounding box for more reliable widths
+  const cardWidth = card.getBoundingClientRect().width + 20; // include margin
   const totalCards = slider.children.length;
+  const visibleCount = getVisibleCount();
 
-  const maxPosition = totalCards - visibleCount;
-  position += direction;
-
-  if (position < 0) position = 0;
-  if (position > maxPosition) position = maxPosition;
+  const maxPosition = Math.max(0, totalCards - visibleCount);
+  position = Math.min(Math.max(position + direction, 0), maxPosition);
 
   slider.style.transform = `translateX(-${position * cardWidth}px)`;
 }
 
-// Recalculate position on resize to prevent blank space
-window.addEventListener('resize', () => {
-  slide(0);
-});
+window.addEventListener("resize", () => slide(0), { passive:true });
 
+// ===== Appointment form validation + (SECURE) Telegram sending =====
+const form = document.getElementById("appointment-form");
+const thankYouMsg = document.getElementById("thank-you-msg");
 
-//appointment form validation
-const form = document.getElementById('appointment-form');
-const thankYouMsg = document.getElementById('thank-you-msg');
+if (form) {
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-form.addEventListener('submit', function(e) {
-  e.preventDefault();
+    const name    = (document.getElementById("name")    ?.value || "").trim();
+    const surname = (document.getElementById("surname") ?.value || "").trim();
+    const email   = (document.getElementById("email")   ?.value || "").trim();
+    const phone   = (document.getElementById("phone")   ?.value || "").trim();
+    const reason  = (document.getElementById("reason")  ?.value || "").trim();
 
-  const name = document.getElementById('name').value.trim();
-  const surname = document.getElementById('surname').value.trim();
-  const email = document.getElementById('email').value.trim();
-  const phone = document.getElementById('phone').value.trim();
-  const reason = document.getElementById('reason').value.trim();
+    if (!name || !surname || !email || !phone || !reason) {
+      alert("Ju lutem plotësoni të gjitha fushat.");
+      return;
+    }
 
-  const message = `
-📅 New Appointment Request:
+    const message =
+`📅 New Appointment Request:
 
 👤 Name: ${name} ${surname}
 📧 Email: ${email}
 📞 Phone: ${phone}
-📝 Reason: ${reason}
-  `;
+📝 Reason: ${reason}`;
 
-  const token = "7812234567:AAER3DbLxUU7ddGOj8SoAm28iibrno1AmsY"; // <-- Replace this
-  const chat_id = "1522497065"; // <-- Replace this
-  const url = `https://api.telegram.org/bot${token}/sendMessage`;
+    /*  SECURITY: DO NOT put Telegram token in the browser.
+        Create a tiny proxy endpoint (Hostinger PHP or Cloudflare Worker)
+        that reads TOKEN and CHAT_ID from server-side env vars and forwards
+        this message to Telegram.
 
-  fetch(url, {
-    method: "POST",
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      chat_id: chat_id,
-      text: message
-    })
-  })
-  .then(response => {
-    if (response.ok) {
-      form.reset();
-      thankYouMsg.style.display = 'block';
-    } else {
-      alert("Something went wrong. Please try again.");
+        Example request to your own endpoint:
+        POST /api/send-telegram
+        { text: message }
+    */
+
+    try {
+      const res = await fetch("/api/send-telegram", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: message })
+      });
+      if (res.ok) {
+        form.reset();
+        if (thankYouMsg) thankYouMsg.style.display = "block";
+      } else {
+        alert("Diçka shkoi keq. Ju lutem provoni përsëri.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Gabim gjatë dërgimit të mesazhit.");
     }
-  })
-  .catch(err => {
-    alert("Error sending message.");
-    console.error(err);
   });
-});
-
-
-
-//scroll animation
-function reveal() {
-  var reveals = document.querySelectorAll(".reveal");
-
-  for (var i = 0; i < reveals.length; i++) {
-    var windowHeight = window.innerHeight;
-    var elementTop = reveals[i].getBoundingClientRect().top;
-    var elementVisible = 150;
-
-    if (elementTop < windowHeight - elementVisible) {
-      reveals[i].classList.add("active");
-    } else {
-      reveals[i].classList.remove("active");
-    }
-  }
 }
 
+// ===== Scroll reveal =====
+function reveal() {
+  const reveals = document.querySelectorAll(".reveal");
+  const winH = window.innerHeight;
+  for (let i = 0; i < reveals.length; i++) {
+    const top = reveals[i].getBoundingClientRect().top;
+    if (top < winH - 150) reveals[i].classList.add("active");
+    else reveals[i].classList.remove("active");
+  }
+}
+window.addEventListener("scroll", reveal, { passive:true });
+window.addEventListener("load", reveal);
 
-
-window.addEventListener("scroll", reveal);
-// Initialize Isotope with "work" as the default filter
-var $galleryContainer = $('.gallery').isotope({
-  itemSelector: '.item',
-  layoutMode: 'fitRows',
-  filter: '.work'  // Show "My Work" images by default
-});
-// Handle button clicks
-$('.button-group .button').on('click', function(){
-  $('.button-group .button').removeClass('active');
-  $(this).addClass('active');
-  var value = $(this).attr('data-filter');
-  $galleryContainer.isotope({
-      filter: value
+// ===== Safeguard Isotope usage =====
+(function initIsotope(){
+  if (typeof jQuery === "undefined" || typeof jQuery.fn?.isotope === "undefined") return;
+  const $galleryContainer = jQuery(".gallery").isotope({
+    itemSelector: ".item",
+    layoutMode: "fitRows",
+    filter: ".work" // default
   });
-});
+  jQuery(".button-group .button").on("click", function(){
+    jQuery(".button-group .button").removeClass("active");
+    jQuery(this).addClass("active");
+    const value = jQuery(this).attr("data-filter");
+    $galleryContainer.isotope({ filter: value });
+  });
+})();
+
+// ===== Botpress webchat: lock background & keep input visible =====
+(function attachBotpressGuards(){
+  function lockBody(){
+    const y = window.scrollY || document.documentElement.scrollTop || 0;
+    document.body.dataset.scrollY = y;
+    document.body.classList.add("no-scroll","chat-open");
+    document.body.style.top = `-${y}px`;
+  }
+  function unlockBody(){
+    const y = parseInt(document.body.dataset.scrollY || "0", 10);
+    document.body.classList.remove("no-scroll","chat-open");
+    document.body.style.top = "";
+    window.scrollTo(0, isNaN(y) ? 0 : y);
+  }
+
+  function bind(){
+    if (!window.botpressWebChat?.onEvent) return false;
+    window.botpressWebChat.onEvent((ev)=>{
+      if (ev.type === "webchat:opened") lockBody();
+      if (ev.type === "webchat:closed") unlockBody();
+    }, ["webchat:opened","webchat:closed","webchat:ready"]);
+    return true;
+  }
+
+  // try a few times in case inject.js loads late
+  const tries = [0, 300, 1000, 2000];
+  tries.forEach(t => setTimeout(bind, t));
+
+  // Keep composer in view when keyboard opens on mobile
+  window.addEventListener("focusin", (e)=>{
+    const composer = document.querySelector(".bpw-composer, .bpw-input, .bpw-chat-input");
+    if (composer && composer.contains(e.target)) {
+      setTimeout(()=>composer.scrollIntoView({ block:"end" }), 50);
+    }
+  });
+})();
