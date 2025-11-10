@@ -22,8 +22,8 @@ body {
 
 /* ===== Scroll offset for sticky header ===== */
 .section { scroll-margin-top: 4rem; }
-@media (min-width:600px){ .section{scroll-margin-top:4rem;} }
-@media (min-width:992px){ .section{scroll-margin-top:4rem;} }
+@media (min-width:600px){ .section { scroll-margin-top: 4rem; } }
+@media (min-width:992px){ .section { scroll-margin-top: 4rem; } }
 
 /* ===== Reveal animation ===== */
 .reveal {
@@ -37,29 +37,15 @@ body {
   opacity: 1;
 }
 
-/* ===== Mobile chat + background scroll lock ===== */
+/* ===== Page scroll lock for mobile menu (desktop-safe) ===== */
 body.no-scroll {
   position: fixed;
   overflow: hidden;
   inset: 0;
   width: 100%;
 }
-body.chat-open { overscroll-behavior: contain; }
 
-/* Botpress container safe height */
-#bp-web-widget-container,
-#bp-web-widget,
-.bpw-layout,
-.bpw-layout > div {
-  max-height: 100dvh;
-}
-
-#bp-web-widget-container {
-  z-index: 99999 !important;
-  padding-bottom: env(safe-area-inset-bottom);
-}
-
-/* Sticky header */
+/* ===== Sticky header ===== */
 header.fixed-header {
   position: sticky;
   top: 0;
@@ -72,3 +58,35 @@ header.fixed-header {
 /* Mobile nav */
 .nav-bar.active { display: block; }
 .hamburger { cursor: pointer; }
+
+/* ============================
+   Botpress — MOBILE ONLY fixes
+   ============================ */
+@media (max-width: 768px) {
+  /* Lock the background page while chat is open (only mobile) */
+  body.chat-open {
+    position: fixed;
+    overflow: hidden;
+    inset: 0;
+    width: 100%;
+    overscroll-behavior: contain;
+    touch-action: none; /* stop body touch scroll */
+  }
+
+  /* Keep widget fixed and above everything */
+  #bp-web-widget-container {
+    position: fixed !important;
+    left: 0; right: 0;
+    bottom: 0;
+    z-index: 99999 !important;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* Allow full safe viewport height for the chat */
+  #bp-web-widget-container,
+  #bp-web-widget,
+  .bpw-layout,
+  .bpw-layout > div {
+    max-height: 100dvh; /* better than 100vh on iOS/Android */
+  }
+}

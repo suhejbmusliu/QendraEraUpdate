@@ -165,45 +165,55 @@ window.addEventListener("load", reveal);
   });
 })();
 
-// ===== Botpress webchat: lock background + keyboard-safe fix =====
-(function attachBotpressGuards(){
+/* ============================
+   Botpress — MOBILE ONLY logic
+   ============================ */
+(function botpressMobileGuards(){
+  if (!window.matchMedia('(max-width: 768px)').matches) return;
+
+  // Lock/unlock background page while chat is open
   function lockBody(){
     const y = window.scrollY || document.documentElement.scrollTop || 0;
     document.body.dataset.scrollY = y;
-    document.body.classList.add("no-scroll","chat-open");
+    document.body.classList.add('chat-open');
     document.body.style.top = `-${y}px`;
   }
   function unlockBody(){
-    const y = parseInt(document.body.dataset.scrollY || "0", 10);
-    document.body.classList.remove("no-scroll","chat-open");
-    document.body.style.top = "";
+    const y = parseInt(document.body.dataset.scrollY || '0', 10);
+    document.body.classList.remove('chat-open');
+    document.body.style.top = '';
     window.scrollTo(0, isNaN(y) ? 0 : y);
   }
 
+  // Hook Botpress events (in case inject.js loads late)
   function bind(){
     if (!window.botpressWebChat?.onEvent) return false;
     window.botpressWebChat.onEvent((ev)=>{
-      if (ev.type === "webchat:opened") lockBody();
-      if (ev.type === "webchat:closed") unlockBody();
-    }, ["webchat:opened","webchat:closed","webchat:ready"]);
+      if (ev.type === 'webchat:opened') lockBody();
+      if (ev.type === 'webchat:closed') unlockBody();
+    }, ['webchat:opened','webchat:closed','webchat:ready']);
     return true;
   }
   [0, 300, 1000, 2000].forEach(t => setTimeout(bind, t));
 
-  // === Fix keyboard overlap on mobile ===
+  // Lift the widget above the mobile keyboard
   const vv = window.visualViewport;
   function adjustForKeyboard() {
-    const cont = document.getElementById("bp-web-widget-container");
+    const cont = document.getElementById('bp-web-widget-container');
     if (!cont) return;
     const kb = vv ? Math.max(0, (window.innerHeight - vv.height - vv.offsetTop)) : 0;
-    cont.style.bottom = kb ? (kb + "px") : "";
-    cont.style.height = kb ? `calc(100dvh - ${kb}px)` : "";
+    cont.style.bottom = kb ? (kb + 'px') : '0';
+    cont.style.height = kb ? `calc(100dvh - ${kb}px)` : '';
   }
   if (vv) {
-    vv.addEventListener("resize", adjustForKeyboard);
-    vv.addEventListener("scroll",  adjustForKeyboard);
-    window.addEventListener("orientationchange", () => setTimeout(adjustForKeyboard, 300));
+    vv.addEventListener('resize', adjustForKeyboard);
+    vv.addEventListener('scroll',  adjustForKeyboard);
+    window.addEventListener('orientationchange', () => setTimeout(adjustForKeyboard, 250));
   }
-  window.addEventListener("load", adjustForKeyboard);
-  document.addEventListener("focusin", adjustForKeyboard);
+  window.addEventListener('load', adjustForKeyboard);
+
+  // Prevent background touch scroll while open (iOS)
+  document.addEventListener('touchmove', (e) => {
+    if (document.body.classList.contains('chat-open')) e.preventDefault();
+  }, { passive: false });
 })();
