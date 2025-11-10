@@ -78,8 +78,7 @@ function slide(direction) {
   const card = slider.querySelector(".testimonial-card");
   if (!card) return;
 
-  // Use bounding box for more reliable widths
-  const cardWidth = card.getBoundingClientRect().width + 20; // include margin
+  const cardWidth = card.getBoundingClientRect().width + 20;
   const totalCards = slider.children.length;
   const visibleCount = getVisibleCount();
 
@@ -91,7 +90,7 @@ function slide(direction) {
 
 window.addEventListener("resize", () => slide(0), { passive:true });
 
-// ===== Appointment form validation + (SECURE) Telegram sending =====
+// ===== Appointment form validation =====
 const form = document.getElementById("appointment-form");
 const thankYouMsg = document.getElementById("thank-you-msg");
 
@@ -110,23 +109,13 @@ if (form) {
       return;
     }
 
-    const message =
-`📅 New Appointment Request:
-
+    const message = `
+📅 New Appointment Request:
 👤 Name: ${name} ${surname}
 📧 Email: ${email}
 📞 Phone: ${phone}
-📝 Reason: ${reason}`;
-
-    /*  SECURITY: DO NOT put Telegram token in the browser.
-        Create a tiny proxy endpoint (Hostinger PHP or Cloudflare Worker)
-        that reads TOKEN and CHAT_ID from server-side env vars and forwards
-        this message to Telegram.
-
-        Example request to your own endpoint:
-        POST /api/send-telegram
-        { text: message }
-    */
+📝 Reason: ${reason}
+`;
 
     try {
       const res = await fetch("/api/send-telegram", {
@@ -166,7 +155,7 @@ window.addEventListener("load", reveal);
   const $galleryContainer = jQuery(".gallery").isotope({
     itemSelector: ".item",
     layoutMode: "fitRows",
-    filter: ".work" // default
+    filter: ".work"
   });
   jQuery(".button-group .button").on("click", function(){
     jQuery(".button-group .button").removeClass("active");
@@ -176,7 +165,7 @@ window.addEventListener("load", reveal);
   });
 })();
 
-// ===== Botpress webchat: lock background & keep input visible =====
+// ===== Botpress webchat: lock background + keyboard-safe fix =====
 (function attachBotpressGuards(){
   function lockBody(){
     const y = window.scrollY || document.documentElement.scrollTop || 0;
@@ -199,16 +188,22 @@ window.addEventListener("load", reveal);
     }, ["webchat:opened","webchat:closed","webchat:ready"]);
     return true;
   }
+  [0, 300, 1000, 2000].forEach(t => setTimeout(bind, t));
 
-  // try a few times in case inject.js loads late
-  const tries = [0, 300, 1000, 2000];
-  tries.forEach(t => setTimeout(bind, t));
-
-  // Keep composer in view when keyboard opens on mobile
-  window.addEventListener("focusin", (e)=>{
-    const composer = document.querySelector(".bpw-composer, .bpw-input, .bpw-chat-input");
-    if (composer && composer.contains(e.target)) {
-      setTimeout(()=>composer.scrollIntoView({ block:"end" }), 50);
-    }
-  });
+  // === Fix keyboard overlap on mobile ===
+  const vv = window.visualViewport;
+  function adjustForKeyboard() {
+    const cont = document.getElementById("bp-web-widget-container");
+    if (!cont) return;
+    const kb = vv ? Math.max(0, (window.innerHeight - vv.height - vv.offsetTop)) : 0;
+    cont.style.bottom = kb ? (kb + "px") : "";
+    cont.style.height = kb ? `calc(100dvh - ${kb}px)` : "";
+  }
+  if (vv) {
+    vv.addEventListener("resize", adjustForKeyboard);
+    vv.addEventListener("scroll",  adjustForKeyboard);
+    window.addEventListener("orientationchange", () => setTimeout(adjustForKeyboard, 300));
+  }
+  window.addEventListener("load", adjustForKeyboard);
+  document.addEventListener("focusin", adjustForKeyboard);
 })();
