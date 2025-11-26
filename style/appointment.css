@@ -102,3 +102,17 @@
       height: 2px;
     }
   }
+
+
+  input.error,
+textarea.error {
+  border-color: #e74c3c !important;
+  background-color: #ffe6e6;
+}
+
+.error-msg {
+  color: #e74c3c;
+  font-size: 0.85rem;
+  margin-top: 5px;
+  display: block;
+}
