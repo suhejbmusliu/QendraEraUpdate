@@ -1,12 +1,20 @@
 <?php
-// Show errors while debugging (REMOVE ON PRODUCTION IF YOU WANT)
+// Log errors instead of showing them to visitors.
 error_reporting(E_ALL);
-ini_set('display_errors', 1);
+ini_set('display_errors', 0);
 header('Content-Type: application/json');
 
-// === CONFIGURE THESE ===
-$botToken = '8524259159:AAHmSGZUjDAaXTF4hMwAzXflWEh62ELhPs0';
-$chatId   = '1522497065'; // your user ID or group/channel ID
+// Bot token and chat id live in tg-config.php, which is not committed.
+// On a new server: copy tg-config.example.php to tg-config.php and fill it in.
+$configFile = __DIR__ . '/tg-config.php';
+if (!is_file($configFile)) {
+    http_response_code(500);
+    echo json_encode(['ok' => false, 'error' => 'Contact form is not configured']);
+    exit;
+}
+$config   = require $configFile;
+$botToken = $config['bot_token'];
+$chatId   = $config['chat_id'];
 
 // Read JSON body from JS
 $input = file_get_contents('php://input');
